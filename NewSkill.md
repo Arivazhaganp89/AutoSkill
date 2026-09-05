@@ -341,7 +341,8 @@ Before completing a change, confirm:
 3. Always add JSDoc for getters.
 4. Prefer condition-based synchronization and web-first assertions.
 5. Give locators, waits, retries, and actions meaningful descriptions.
-
+6. Refer sample spec file which is available in the same repo called sample.spec.ts before generating the test block.
+   
 ### Don't
 
 1. Do not add an Allure logger when an existing verification, wait strategy, or action already provides the logging.
