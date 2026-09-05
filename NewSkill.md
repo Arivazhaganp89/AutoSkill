@@ -350,11 +350,18 @@ Before completing a change, confirm:
 4. Do not use `force: true` to bypass actionability checks.
 5. Do not use `selectOption` for custom, non-native dropdowns.
 6. Do not use broad network-idle waits when a specific UI or network condition is available.
-7. Do not add extra * in jsdoc which will increase the code size.
-ex) /**
- * Verifies that the specified promotion displays progress tracking.
- *
- * @param promotionName - Name of the promotion to verify.
- */
+7. Do not add extra `*` in JSDoc, as it will increase the code size.
+
+   Example:
+
+   ```ts
+   /**
+    * Verifies that the specified promotion displays progress tracking.
+    *
+    * @param promotionName - Name of the promotion to verify.
+    */
+   ```
+8. Do not add empty lines between methods, getters, or test steps, as this will increase the code size.
+
 
 
