@@ -341,7 +341,10 @@ Before completing a change, confirm:
 3. Always add JSDoc for getters.
 4. Prefer condition-based synchronization and web-first assertions.
 5. Give locators, waits, retries, and actions meaningful descriptions.
-6. Refer sample spec file which is available in the same repo called sample.spec.ts before generating the test block.
+6. Refer to the sample spec file available in the same repository, called `sample.spec.ts`, before generating the test block.
+7. Refer to the sample class file available in the same repository, called `SampleClass.ts`, before generating the page objects.
+8. A `#region` section is required between getters and actions, as well as between different areas of getters.
+
    
 ### Don't
 
