@@ -338,7 +338,7 @@ Before completing a change, confirm:
 
 1. Use Playwright's default locators. If they are not suitable, use another clear and reliable locator strategy.
 2. Add an Allure logger for new methods.
-3. Always add JSDoc for getters.
+3. Always add complete JSDoc for every public getter, public method, reusable method, and constructor. Include `@param` for every parameter and `@returns` for every non-void return value.
 4. Prefer condition-based synchronization and web-first assertions.
 5. Give locators, waits, retries, and actions meaningful descriptions.
 6. Refer to the sample spec file available in the same repository, called `sample.spec.ts`, before generating the test block.
@@ -355,9 +355,7 @@ Before completing a change, confirm:
 5. Do not use `selectOption` for custom, non-native dropdowns.
 6. Do not use broad network-idle waits when a specific UI or network condition is available.
 7. Do not add extra `*` in JSDoc, as it will increase the code size.
-
    Example:
-
    ```ts
    /**
     * Verifies that the specified promotion displays progress tracking.
@@ -365,7 +363,23 @@ Before completing a change, confirm:
     * @param promotionName - Name of the promotion to verify.
     */
    ```
-8. Do not add empty lines between methods, getters, or test steps, as this will increase the code size.
+8.  Do not add empty lines between methods, getters, or test steps, as this will increase the code size.
+9.  Do not generate incomplete JSDoc. A description alone is not sufficient for a parameterized member.
+10. Do not omit `@param` for any declared parameter.
+11. Do not omit `@returns` for a member that returns a value.
+12. Do not add incorrect `@param` or `@returns` tags for parameters or return values that do not exist.
+
+### JSDoc Contract
+
+Every public getter, public method, reusable method, and constructor must have complete JSDoc.
+* Every parameter must have a corresponding `@param` tag.
+* Every non-void return value must have a corresponding `@returns` tag.
+* Parameter names in `@param` must exactly match the TypeScript signature.
+* Constructors must document every parameter.
+* Do not omit `@param` or `@returns` when they are applicable.
+* Do not add `@param` or `@returns` when they are not applicable.
+* Keep JSDoc concise and business-focused.
+* Do not add extra `*` lines or empty lines inside JSDoc.
 
 
 
