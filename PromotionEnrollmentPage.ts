@@ -1,6 +1,6 @@
 import type { Page, Locator } from '@playwright/test';
 import { BasePage } from './BasePage';
-import { smartClick } from '../../../qaa-playwright-utils/utils/actions';
+import { smartClick, smartFill, smartSelect } from '../../../qaa-playwright-utils/utils/actions';
 import { Verifications } from '../../../qaa-playwright-utils/utils/verifications';
 /**
 * Page object for Promotion Enrollment page.
@@ -85,6 +85,15 @@ return this.page.getByText(
 { exact: true }
 );
 }
+/**
+* Gets the shipping address saved confirmation message.
+* @returns {Locator} The shipping address saved confirmation message.
+*/
+get shippingAddressSavedMessage(): Locator {
+return this.page.getByText('Shipping address saved.', {
+exact: true,
+});
+}
 /// region- E-mail Address-----------------------
 /** Gets the E-mail Address section heading. */
 get emailAddressHeading(): Locator {
@@ -97,6 +106,36 @@ return this.emailAddressHeading.locator('..').getByText('test@test.com', { exact
 /** Gets the Edit E-mail link. */
 get editEmailLink(): Locator {
 return this.page.getByRole('link', { name: 'Edit E-mail', exact: true });
+}
+/**
+* Gets the editable E-mail Address field.
+* @returns {Locator} The editable E-mail Address field.
+*/
+get editableEmailAddressField(): Locator {
+return this.page.locator('#emailAddress');
+}
+/**
+* Gets the E-mail address saved confirmation message.
+* @returns {Locator} The E-mail address saved confirmation message.
+*/
+get emailAddressSavedMessage(): Locator {
+return this.page.getByText('E-mail address saved.', {
+exact: true,
+});
+}
+/**
+* Gets the E-mail Address validation message.
+* @returns {Locator} The E-mail Address validation message.
+*/
+get emailAddressValidationMessage(): Locator {
+return this.page.getByText('The E-mail Address field must be a valid email', { exact: true });
+}
+/**
+* Gets the E-mail Address helper text.
+* @returns {Locator} The E-mail Address helper text.
+*/
+get emailAddressHelperText(): Locator {
+return this.page.getByText('Any edits made here will be made to the e-mail address tied to your user preferences.', { exact: true });
 }
 /// region- Enrollment Actions-----------------------
 /** Gets the Back link. */
@@ -124,6 +163,52 @@ return this.page.getByRole('dialog');
 get enrollmentModalCloseButton(): Locator {
 return this.enrollmentModal.getByRole('button', { name: 'Close', exact: true });
 }
+/// region-Edit Address-----------
+/**
+* Gets the Edit Address link.
+* @returns {Locator} The Edit Address link.
+*/
+get editAddressLink(): Locator {
+return this.page.getByRole('link', {
+name: 'Edit Address',
+exact: true,
+});
+}
+/**
+* Gets the Attention To field.
+* @returns {Locator} The Attention To field.
+*/
+get attentionToField(): Locator {
+return this.page.locator('#editAddressAttnTo');
+}
+/**
+* Gets the Street Address field.
+* @returns {Locator} The Street Address field.
+*/
+get streetAddressField(): Locator {
+return this.page.locator('#editAddressStreet');
+}
+/**
+* Gets the City field.
+* @returns {Locator} The City field.
+*/
+get cityField(): Locator {
+return this.page.locator('#editAddressCity');
+}
+/**
+* Gets the State field.
+* @returns {Locator} The State field.
+*/
+get stateField(): Locator {
+return this.page.locator('#editAddressState');
+}
+/**
+* Gets the Zip Code field.
+* @returns {Locator} The Zip Code field.
+*/
+get zipCodeField(): Locator {
+return this.page.locator('#editAddressZip');
+}
 /// region- Spanish Localization Getters-----------------------
 /** Promotion enrollment page title in Spanish. */
 get promotionEnrollmentTitleInSpanish(): Locator {
@@ -134,9 +219,8 @@ return this.page.getByText("Participar en esta promoción O'Reilly Pro", { exact
 * @returns {Locator} The gift card heading displayed in Spanish.
 */
 get giftCardHeadingInSpanish(): Locator {
-return this.page.getByRole('heading', {
-name: /^(Tarjeta de regalo:|Seleccione una tarjeta de regalo)$/,
-exact: true,
+return this.page.locator('h2').filter({
+hasText: /Tarjeta de regalo:|Seleccione una tarjeta de regalo/,
 });
 }
 /** Shipping Address heading displayed in Spanish. */
@@ -235,6 +319,83 @@ description: 'Enrollment modal Close button',
 get availableGiftCards(): Locator {
 return this.page.locator('a.gift-card, img.gift-card');
 }
+/**
+* Enters the specified E-mail Address.
+* @param {string} emailAddress - The E-mail Address to enter.
+*/
+async enterEmailAddress(emailAddress: string): Promise<void> {
+await smartFill(this.page, this.editableEmailAddressField, emailAddress, {
+description: 'E-mail Address',
+});
+}
+/**
+* Selects the first available gift card.
+* @returns {Promise<void>} Resolves when the first available gift card is selected.
+*/
+async selectFirstAvailableGiftCard(): Promise<void> {
+await smartClick(this.page, this.availableGiftCards.first(), {
+description: 'first available gift card',
+});
+}
+/**
+* Opens the editable shipping address fields.
+* @returns {Promise<void>} Resolves when the Edit Address link is selected.
+*/
+async clickEditAddress(): Promise<void> {
+await smartClick(this.page, this.editAddressLink, {
+description: 'Edit Address',
+});
+}
+/**
+* Enters the Attention To value.
+* @param {string} attentionTo - The Attention To value to enter.
+*/
+async enterAttentionTo(attentionTo: string): Promise<void> {
+await smartFill(this.page, this.attentionToField, attentionTo, {
+description: 'Attention To',
+});
+}
+/**
+* Enters the Street Address.
+* @param {string} streetAddress - The Street Address to enter.
+*/
+async enterStreetAddress(streetAddress: string): Promise<void> {
+await smartFill(this.page, this.streetAddressField, streetAddress, {
+description: 'Street Address',
+});
+}
+/**
+* Enters the City.
+* @param {string} city - The City to enter.
+*/
+async enterCity(city: string): Promise<void> {
+await smartFill(this.page, this.cityField, city, {
+description: 'City',
+});
+}
+/**
+* Selects the specified State.
+* @param {string} state - The State label to select.
+*/
+async selectState(state: string): Promise<void> {
+await smartSelect(
+this.page,
+this.stateField,
+{ label: state },
+{
+description: 'State',
+}
+);
+}
+/**
+* Enters the Zip Code.
+* @param {string} zipCode - The Zip Code to enter.
+*/
+async enterZipCode(zipCode: string): Promise<void> {
+await smartFill(this.page, this.zipCodeField, zipCode, {
+description: 'Zip Code',
+});
+}
 /// region- Verifications-----------------------
 /** Verifies that the Promotions navigation title is displayed. */
 async verifyPromotionsNavigationTitle(): Promise<void> {
@@ -311,12 +472,28 @@ await Verifications.verifyVisible(this.giftCardDeliveryNotice, 'Gift card delive
 async verifyEnrollmentModalHidden(): Promise<void> {
 await Verifications.verifyHidden(this.enrollmentModal, 'Enrollment modal');
 }
-/** Selects the first available gift card. */
-async selectFirstAvailableGiftCard(): Promise<void> {
-await smartClick(this.page, this.availableGiftCards.first(), {
-description: 'first available gift card',
-});
+/**
+* Verifies that the editable E-mail Address field is displayed.
+* @returns {Promise<void>} Resolves when the editable E-mail Address field is visible.
+*/
+async verifyEditableEmailAddressField(): Promise<void> {
+await Verifications.verifyVisible(this.editableEmailAddressField, 'Editable E-mail Address field');
 }
+/**
+* Verifies that the E-mail address saved confirmation message is displayed.
+* @returns {Promise<void>} Resolves when the E-mail address saved confirmation message is visible.
+*/
+async verifyEmailAddressSavedMessage(): Promise<void> {
+await Verifications.verifyVisible(this.emailAddressSavedMessage, 'E-mail address saved confirmation message');
+}
+/**
+* Verifies that the E-mail Address validation message is displayed.
+* @returns {Promise<void>} Resolves when the E-mail Address validation message is visible.
+*/
+async verifyEmailAddressValidationMessage(): Promise<void> {
+await Verifications.verifyVisible(this.emailAddressValidationMessage, 'E-mail Address validation message');
+}
+
 /// region- Spanish Localization Verifications-----------------------
 /**
 * Verifies that the promotion enrollment title is displayed in Spanish.
@@ -388,5 +565,36 @@ await Verifications.verifyVisible(this.enrollmentTermsMessageInSpanish, 'Enrollm
 async verifyGiftCardDeliveryNoticeInSpanish(): Promise<void> {
 await Verifications.verifyVisible(this.giftCardDeliveryNoticeInSpanish, 'Gift card delivery notice in Spanish');
 }
+/**
+* Verifies the Edit Address link is displayed.
+* @returns {Promise<void>} Resolves when the Edit Address link is visible.
+*/
+async verifyEditAddressLink(): Promise<void> {
+await Verifications.verifyVisible(this.editAddressLink, 'Edit Address link');
 }
-
+/**
+* Verifies that the E-mail Address helper text is displayed.
+* @returns {Promise<void>} Resolves when the E-mail Address helper text is visible.
+*/
+async verifyEmailAddressHelperText(): Promise<void> {
+await Verifications.verifyVisible(this.emailAddressHelperText, 'E-mail Address helper text');
+}
+/**
+* Verifies that the editable shipping address fields are displayed.
+* @returns {Promise<void>} Resolves when all editable shipping address fields are visible.
+*/
+async verifyEditableAddressFields(): Promise<void> {
+await Verifications.verifyVisible(this.attentionToField, 'Attention To field');
+await Verifications.verifyVisible(this.streetAddressField, 'Street Address field');
+await Verifications.verifyVisible(this.cityField, 'City field');
+await Verifications.verifyVisible(this.stateField, 'State field');
+await Verifications.verifyVisible(this.zipCodeField, 'Zip Code field');
+}
+/**
+* Verifies that the shipping address saved confirmation message is displayed.
+* @returns {Promise<void>} Resolves when the shipping address saved confirmation message is visible.
+*/
+async verifyShippingAddressSavedMessage(): Promise<void> {
+await Verifications.verifyVisible(this.shippingAddressSavedMessage, 'Shipping address saved confirmation message');
+}
+}
