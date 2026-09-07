@@ -1,4 +1,3 @@
-
 import type { Page, Locator } from '@playwright/test';
 import { BasePage } from './BasePage';
 import { smartClick } from '../../../qaa-playwright-utils/utils/actions';
@@ -42,30 +41,54 @@ get promotionEnrollmentPageTitle(): Locator {
 return this.page.getByText("O'Reilly Pro Promotion Enrollment", { exact: true });
 }
 /** Gets the promotion name. */
-get promotionName(): Locator {
-return this.page.getByRole('heading', { name: 'BA Promotions', exact: true });
+/**
+* Gets the promotion name.
+* @param {string} expectedPromotionName - The expected promotion name.
+*/
+getPromotionName(expectedPromotionName: string): Locator {
+return this.page.getByRole('heading', {
+name: expectedPromotionName,
+exact: true,
+});
 }
 /** Gets the promotion active date. */
 get promotionActiveDate(): Locator {
-return this.page.getByText('Active:', { exact: false }).getByText('September 3 - September 11', { exact: true });
+return this.page.locator('div.text-xs').filter({ hasText: 'Active:' });
 }
 /// region- Shipping Address-----------------------
 /** Gets the Shipping Address section heading. */
 get shippingAddressHeading(): Locator {
-return this.page.getByRole('heading', { name: 'Shipping Address', exact: true });
+return this.page.getByText('Shipping Address', { exact: true });
 }
-/** Gets the shipping address. */
+/** Gets the current shipping address. */
 get shippingAddress(): Locator {
 return this.page.locator('address');
 }
+/** Gets the current shipping city. */
+get currentShippingCity(): Locator {
+return this.page.locator('.current-city');
+}
+
+/** Gets the current shipping state. */
+get currentShippingState(): Locator {
+return this.page.locator('.current-state');
+}
+
+/** Gets the current shipping ZIP code. */
+get currentShippingZip(): Locator {
+return this.page.locator('.current-zip');
+}
 /** Gets the current USPS mailing address notice. */
 get currentMailingAddressNotice(): Locator {
-return this.page.getByText('Your current USPS mailing address on file is above.', { exact: false });
+return this.page.getByText(
+"Your current USPS mailing address on file is above. If this is incorrect, please contact your O'Reilly Auto Parts sales representative. We cannot ship to P.O. Boxes.",
+{ exact: true }
+);
 }
 /// region- E-mail Address-----------------------
 /** Gets the E-mail Address section heading. */
 get emailAddressHeading(): Locator {
-return this.page.getByRole('heading', { name: 'E-mail Address', exact: true });
+return this.page.getByText('E-mail Address', { exact: true });
 }
 /** Gets the current e-mail address. */
 get emailAddress(): Locator {
@@ -100,6 +123,72 @@ return this.page.getByRole('dialog');
 /** Gets the enrollment modal Close button. */
 get enrollmentModalCloseButton(): Locator {
 return this.enrollmentModal.getByRole('button', { name: 'Close', exact: true });
+}
+/// region- Spanish Localization Getters-----------------------
+/** Promotion enrollment page title in Spanish. */
+get promotionEnrollmentTitleInSpanish(): Locator {
+return this.page.getByText("Participar en esta promoción O'Reilly Pro", { exact: true });
+}
+/**
+* Gets the gift card heading in Spanish.
+* @returns {Locator} The gift card heading displayed in Spanish.
+*/
+get giftCardHeadingInSpanish(): Locator {
+return this.page.getByRole('heading', {
+name: /^(Tarjeta de regalo:|Seleccione una tarjeta de regalo)$/,
+exact: true,
+});
+}
+/** Shipping Address heading displayed in Spanish. */
+get shippingAddressHeadingInSpanish(): Locator {
+return this.page.getByRole('heading', {
+name: /^Dirección de envío/,
+});
+}
+/** Shipping address helper text in Spanish. */
+get shippingHelperTextInSpanish(): Locator {
+return this.page.getByText(
+"Esta es la dirección de correo de USPS que aparece en nuestro archivo. Si esta dirección es incorrecta contacte a su representante de ventas de O'Reilly Auto Parts.*",
+{ exact: true }
+);
+}
+/** E-mail Address heading displayed in Spanish. */
+get emailAddressHeadingInSpanish(): Locator {
+return this.page.getByText('Dirección de correo electrónico', {
+exact: true,
+});
+}
+/** Edit email link in Spanish. */
+get editEmailLinkInSpanish(): Locator {
+return this.page.getByRole('link', {
+name: 'Cambiar la dirección de correo electrónico',
+exact: true,
+});
+}
+/** Back link in Spanish. */
+get backLinkInSpanish(): Locator {
+return this.page.getByRole('link', {
+name: 'Volver atrás',
+exact: true,
+});
+}
+/** Enroll button in Spanish. */
+get enrollButtonInSpanish(): Locator {
+return this.page.getByRole('button', {
+name: 'Participar',
+exact: true,
+});
+}
+/** Enrollment terms message in Spanish. */
+get enrollmentTermsMessageInSpanish(): Locator {
+return this.page.getByText('*Al hacer click en participar aceptas los terminos y condiciones.', { exact: true });
+}
+/** Gift card delivery notice in Spanish. */
+get giftCardDeliveryNoticeInSpanish(): Locator {
+return this.page.getByText(
+"*Las tarjetas de regalo de las promociones serán enviadas a la dirección del cliente que aparece en el archivo. Si necesita actualizar su dirección, contacte a su tienda local O'Reilly.",
+{ exact: true }
+);
 }
 /// region- Actions-----------------------
 /** Clicks the Current Promotions navigation link. */
@@ -138,125 +227,166 @@ await smartClick(this.page, this.enrollmentModalCloseButton, {
 description: 'Enrollment modal Close button',
 });
 }
+/// region -gift card selection-----------------
+/**
+* Gets the available gift cards.
+* @returns {Locator} The available gift cards.
+*/
+get availableGiftCards(): Locator {
+return this.page.locator('a.gift-card, img.gift-card');
+}
 /// region- Verifications-----------------------
 /** Verifies that the Promotions navigation title is displayed. */
 async verifyPromotionsNavigationTitle(): Promise<void> {
-await Verifications.verifyVisible(
-this.promotionsNavigationTitle,
-'Promotions navigation title',
-);
+await Verifications.verifyVisible(this.promotionsNavigationTitle, 'Promotions navigation title');
 }
 /** Verifies that the Current Promotions navigation link is displayed. */
 async verifyCurrentPromotionsLink(): Promise<void> {
-await Verifications.verifyVisible(
-this.currentPromotionsLink,
-'Current Promotions navigation link',
-);
+await Verifications.verifyVisible(this.currentPromotionsLink, 'Current Promotions navigation link');
 }
 /** Verifies that the Past Promotions navigation link is displayed. */
 async verifyPastPromotionsLink(): Promise<void> {
-await Verifications.verifyVisible(
-this.pastPromotionsLink,
-'Past Promotions navigation link',
-);
+await Verifications.verifyVisible(this.pastPromotionsLink, 'Past Promotions navigation link');
 }
 /** Verifies that the Promotion Enrollment page title is displayed. */
 async verifyPromotionEnrollmentPageTitle(): Promise<void> {
-await Verifications.verifyVisible(
-this.promotionEnrollmentPageTitle,
-"O'Reilly Pro Promotion Enrollment page title",
-);
+await Verifications.verifyVisible(this.promotionEnrollmentPageTitle, "O'Reilly Pro Promotion Enrollment page title");
 }
-/** Verifies that the promotion name is displayed. */
-async verifyPromotionName(): Promise<void> {
-await Verifications.verifyVisible(
-this.promotionName,
-'Promotion name',
-);
+/**
+/**
+* Verifies that the promotion name is displayed.
+* @param {string} expectedPromotionName - The expected promotion name.
+*/
+async verifyPromotionName(expectedPromotionName: string): Promise<void> {
+await Verifications.verifyVisible(this.getPromotionName(expectedPromotionName), 'Promotion name');
 }
 /** Verifies that the promotion active date is displayed. */
 async verifyPromotionActiveDate(): Promise<void> {
-await Verifications.verifyVisible(
-this.promotionActiveDate,
-'Promotion active date',
-);
+await Verifications.verifyVisible(this.promotionActiveDate, 'Promotion active date');
 }
 /** Verifies that the Shipping Address section is displayed. */
 async verifyShippingAddressHeading(): Promise<void> {
-await Verifications.verifyVisible(
-this.shippingAddressHeading,
-'Shipping Address section heading',
-);
+await Verifications.verifyVisible(this.shippingAddressHeading, 'Shipping Address section heading');
 }
-/** Verifies that the shipping address is displayed. */
+/** Verifies that the current shipping address is displayed with city, state, and ZIP code. */
 async verifyShippingAddress(): Promise<void> {
-await Verifications.verifyVisible(
-this.shippingAddress,
-'Shipping address',
-);
+await Verifications.verifyVisible(this.shippingAddress, 'Shipping address');
+await Verifications.verifyVisible(this.currentShippingCity, 'Current shipping city');
+await Verifications.verifyVisible(this.currentShippingState, 'Current shipping state');
+await Verifications.verifyVisible(this.currentShippingZip, 'Current shipping ZIP code');
 }
 /** Verifies that the current USPS mailing address notice is displayed. */
 async verifyCurrentMailingAddressNotice(): Promise<void> {
-await Verifications.verifyVisible(
-this.currentMailingAddressNotice,
-'Current USPS mailing address notice',
-);
+await Verifications.verifyVisible(this.currentMailingAddressNotice, 'Current USPS mailing address notice');
 }
 /** Verifies that the E-mail Address section is displayed. */
 async verifyEmailAddressHeading(): Promise<void> {
-await Verifications.verifyVisible(
-this.emailAddressHeading,
-'E-mail Address section heading',
-);
+await Verifications.verifyVisible(this.emailAddressHeading, 'E-mail Address section heading');
 }
 /** Verifies that the e-mail address is displayed. */
 async verifyEmailAddress(): Promise<void> {
-await Verifications.verifyVisible(
-this.emailAddress,
-'E-mail address',
-);
+await Verifications.verifyVisible(this.emailAddress, 'E-mail address');
 }
 /** Verifies that the Edit E-mail link is displayed. */
 async verifyEditEmailLink(): Promise<void> {
-await Verifications.verifyVisible(
-this.editEmailLink,
-'Edit E-mail link',
-);
+await Verifications.verifyVisible(this.editEmailLink, 'Edit E-mail link');
 }
 /** Verifies that the Back link is displayed. */
 async verifyBackLink(): Promise<void> {
-await Verifications.verifyVisible(
-this.backLink,
-'Back link',
-);
+await Verifications.verifyVisible(this.backLink, 'Back link');
 }
 /** Verifies that the Enroll button is displayed. */
 async verifyEnrollButton(): Promise<void> {
-await Verifications.verifyVisible(
-this.enrollButton,
-'Enroll button',
-);
+await Verifications.verifyVisible(this.enrollButton, 'Enroll button');
 }
 /** Verifies that the enrollment terms and conditions message is displayed. */
 async verifyEnrollmentTermsMessage(): Promise<void> {
-await Verifications.verifyVisible(
-this.enrollmentTermsMessage,
-'Enrollment terms and conditions message',
-);
+await Verifications.verifyVisible(this.enrollmentTermsMessage, 'Enrollment terms and conditions message');
 }
 /** Verifies that the gift card delivery notice is displayed. */
 async verifyGiftCardDeliveryNotice(): Promise<void> {
-await Verifications.verifyVisible(
-this.giftCardDeliveryNotice,
-'Gift card delivery notice',
-);
+await Verifications.verifyVisible(this.giftCardDeliveryNotice, 'Gift card delivery notice');
 }
 /** Verifies that the enrollment modal is hidden. */
 async verifyEnrollmentModalHidden(): Promise<void> {
-await Verifications.verifyHidden(
-this.enrollmentModal,
-'Enrollment modal',
-);
+await Verifications.verifyHidden(this.enrollmentModal, 'Enrollment modal');
+}
+/** Selects the first available gift card. */
+async selectFirstAvailableGiftCard(): Promise<void> {
+await smartClick(this.page, this.availableGiftCards.first(), {
+description: 'first available gift card',
+});
+}
+/// region- Spanish Localization Verifications-----------------------
+/**
+* Verifies that the promotion enrollment title is displayed in Spanish.
+* @returns {Promise<void>} Resolves when the promotion enrollment title is displayed.
+*/
+async verifyPromotionEnrollmentTitleInSpanish(): Promise<void> {
+await Verifications.verifyVisible(this.promotionEnrollmentTitleInSpanish, 'Promotion enrollment title in Spanish');
+}
+/**
+* Verifies that the gift card heading is displayed in Spanish.
+* @returns {Promise<void>} Resolves when the gift card heading is displayed.
+*/
+async verifyGiftCardHeadingInSpanish(): Promise<void> {
+await Verifications.verifyVisible(this.giftCardHeadingInSpanish, 'Gift card heading in Spanish');
+}
+/**
+* Verifies that the shipping address heading is displayed in Spanish.
+* @returns {Promise<void>} Resolves when the shipping address heading is displayed.
+*/
+async verifyShippingAddressHeadingInSpanish(): Promise<void> {
+await Verifications.verifyVisible(this.shippingAddressHeadingInSpanish, 'Shipping address heading in Spanish');
+}
+/**
+* Verifies that the shipping helper text is displayed in Spanish.
+* @returns {Promise<void>} Resolves when the shipping helper text is displayed.
+*/
+async verifyShippingHelperTextInSpanish(): Promise<void> {
+await Verifications.verifyVisible(this.shippingHelperTextInSpanish, 'Shipping helper text in Spanish');
+}
+/**
+* Verifies that the email address heading is displayed in Spanish.
+* @returns {Promise<void>} Resolves when the email address heading is displayed.
+*/
+async verifyEmailAddressHeadingInSpanish(): Promise<void> {
+await Verifications.verifyVisible(this.emailAddressHeadingInSpanish, 'Email address heading in Spanish');
+}
+/**
+* Verifies that the edit email link is displayed in Spanish.
+* @returns {Promise<void>} Resolves when the edit email link is displayed.
+*/
+async verifyEditEmailLinkInSpanish(): Promise<void> {
+await Verifications.verifyVisible(this.editEmailLinkInSpanish, 'Edit email link in Spanish');
+}
+/**
+* Verifies that the back link is displayed in Spanish.
+* @returns {Promise<void>} Resolves when the back link is displayed.
+*/
+async verifyBackLinkInSpanish(): Promise<void> {
+await Verifications.verifyVisible(this.backLinkInSpanish, 'Back link in Spanish');
+}
+/**
+* Verifies that the enroll button is displayed in Spanish.
+* @returns {Promise<void>} Resolves when the enroll button is displayed.
+*/
+async verifyEnrollButtonInSpanish(): Promise<void> {
+await Verifications.verifyVisible(this.enrollButtonInSpanish, 'Enroll button in Spanish');
+}
+/**
+* Verifies that the enrollment terms message is displayed in Spanish.
+* @returns {Promise<void>} Resolves when the enrollment terms message is displayed.
+*/
+async verifyEnrollmentTermsMessageInSpanish(): Promise<void> {
+await Verifications.verifyVisible(this.enrollmentTermsMessageInSpanish, 'Enrollment terms message in Spanish');
+}
+/**
+* Verifies that the gift card delivery notice is displayed in Spanish.
+* @returns {Promise<void>} Resolves when the gift card delivery notice is displayed.
+*/
+async verifyGiftCardDeliveryNoticeInSpanish(): Promise<void> {
+await Verifications.verifyVisible(this.giftCardDeliveryNoticeInSpanish, 'Gift card delivery notice in Spanish');
 }
 }
 
