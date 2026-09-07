@@ -28,9 +28,12 @@ get pastPromotionsLink(): Locator {
 return this.page.getByRole('link', { name: /Past Promotions|Past Promos/ });
 }
 /// region- Current Promotions Content-----------------------
-/** Gets the Current Promotions section. */
+/**
+* Gets the Current Promotions section.
+* @returns {Locator} The Current Promotions section.
+*/
 get currentPromotionsSection(): Locator {
-return this.page.locator('.promo-tracker');
+return this.page.getByTestId('current-promotion-box').or(this.page.locator('.promo-tracker')).first();
 }
 /** Gets all promotion title links. */
 get promotionTitleLinks(): Locator {
@@ -48,11 +51,11 @@ return this.currentPromotionsSection
 .filter({ hasText: /Enroll Now|Participar ahora/ })
 .first();
 }
-/** Gets the enrollment link from the first not-enrolled promotion card. */
+/**
+* Gets the first not-enrolled promotion name link.
+*/
 get firstNotEnrolledPromotionLink(): Locator {
-return this.firstNotEnrolledPromotionCard.getByRole('link', {
-name: /^(Enroll Now|Participar ahora)$/,
-});
+return this.currentPromotionsSection.locator('a[href*="#/enroll/"]').first();
 }
 /** Gets the first not-enrolled promotion title. */
 get firstNotEnrolledPromotionTitle(): Locator {
